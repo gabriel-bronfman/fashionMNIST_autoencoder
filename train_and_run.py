@@ -65,6 +65,7 @@ else:
     #Train Model for 20 epochs
     
     model = AE_CNN().to(device)
+    model.train()
     loss_function = torch.nn.MSELoss()
 
     optimizer = torch.optim.Adam(model.parameters(), 
@@ -126,6 +127,7 @@ test_loader = torch.utils.data.DataLoader(dataset = test_dataset,
 
 features = []
 tags = []
+model.eval()
 
 # Pass through validation set, capturing list of flattened latent feature space, and creating a list of index-matched ground truth labels
 for (image,labels) in test_loader:
@@ -142,11 +144,11 @@ for (image,labels) in test_loader:
         tags.append(labels_map[label])
         
 
-
+print(features)
 # Using t-stochastic nearest neighbor embedding, we can lower the 1x(8*4*4) space into a 2D space for visualization
 
 tsne = TSNE(n_components=2, random_state=0)
-projections = tsne.fit_transform(features)
+projections = tsne.fit_transform(np.array(features))
 
 # Create a Pandas dataframe to make graphing easier with Plotly
 df = pd.DataFrame(projections, columns=['x', 'y'])
